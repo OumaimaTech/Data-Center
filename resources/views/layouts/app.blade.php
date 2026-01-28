@@ -11,29 +11,88 @@
     <nav class="navbar">
         <div class="container">
             <div class="navbar-brand">
-                <a href="{{ route('home') }}">Data Center</a>
+                <a href="{{ route('home') }}">
+                    Data Center
+                </a>
             </div>
             <div class="navbar-menu">
                 @auth
-                    <a href="{{ route('dashboard') }}">Tableau de bord</a>
-                    <a href="{{ route('resources.index') }}">Ressources</a>
-                    <a href="{{ route('reservations.index') }}">Réservations</a>
-                    <a href="{{ route('notifications.index') }}">
-                        Notifications
-                        @php
-                            $unreadCount = auth()->user()->notifications()->whereNull('read_at')->count();
-                        @endphp
-                        @if($unreadCount > 0)
-                            <span class="badge">{{ $unreadCount }}</span>
-                        @endif
-                    </a>
-                    @if(auth()->user()->role && auth()->user()->role->name === 'Administrateur')
-                        <a href="{{ route('admin.users.index') }}">Utilisateurs</a>
+                    @php
+                        $userRole = auth()->user()->role ? auth()->user()->role->name : null;
+                    @endphp
+
+                    @if($userRole === 'Invité')
+                        <a href="{{ route('dashboard') }}">Accueil</a>
+                        <a href="{{ route('guest.resources') }}">Ressources</a>
+                        <a href="{{ route('guest.info') }}">Informations</a>
+                        <a href="{{ route('account-request.create') }}">Demander un compte</a>
                     @endif
+
+                    @if($userRole === 'Utilisateur interne')
+                        <a href="{{ route('dashboard') }}">Tableau de bord</a>
+                        <a href="{{ route('resources.index') }}">Ressources</a>
+                        <a href="{{ route('reservations.index') }}">Mes Réservations</a>
+                        <a href="{{ route('reservations.history') }}">Historique</a>
+                        <a href="{{ route('incidents.index') }}">Incidents</a>
+                        <a href="{{ route('notifications.index') }}">
+                            Notifications
+                            @php
+                                $unreadCount = auth()->user()->notifications()->whereNull('read_at')->count();
+                            @endphp
+                            @if($unreadCount > 0)
+                                <span class="badge">{{ $unreadCount }}</span>
+                            @endif
+                        </a>
+                    @endif
+
+                    @if($userRole === 'Responsable technique')
+                        <a href="{{ route('dashboard') }}">Tableau de bord</a>
+                        <a href="{{ route('resources.index') }}">Mes Ressources</a>
+                        <a href="{{ route('reservations.index') }}">Demandes</a>
+                        <a href="{{ route('incidents.index') }}">Incidents</a>
+                        <a href="{{ route('notifications.index') }}">
+                            Notifications
+                            @php
+                                $unreadCount = auth()->user()->notifications()->whereNull('read_at')->count();
+                            @endphp
+                            @if($unreadCount > 0)
+                                <span class="badge">{{ $unreadCount }}</span>
+                            @endif
+                        </a>
+                    @endif
+
+                    @if($userRole === 'Administrateur')
+                        <a href="{{ route('dashboard') }}">Tableau de bord</a>
+                        <a href="{{ route('resources.index') }}">Ressources</a>
+                        <a href="{{ route('reservations.index') }}">Réservations</a>
+                        <a href="{{ route('incidents.index') }}">Incidents</a>
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle">Administration ▼</a>
+                            <div class="dropdown-menu">
+                                <a href="{{ route('admin.users.index') }}">Utilisateurs</a>
+                                <a href="{{ route('admin.categories.index') }}">Catégories</a>
+                                <a href="{{ route('admin.maintenance.index') }}">Maintenance</a>
+                                <a href="{{ route('admin.statistics.index') }}">Statistiques</a>
+                                <a href="{{ route('admin.account-requests.index') }}">Demandes de compte</a>
+                            </div>
+                        </div>
+                        <a href="{{ route('notifications.index') }}">
+                            Notifications
+                            @php
+                                $unreadCount = auth()->user()->notifications()->whereNull('read_at')->count();
+                            @endphp
+                            @if($unreadCount > 0)
+                                <span class="badge">{{ $unreadCount }}</span>
+                            @endif
+                        </a>
+                    @endif
+
                     <div class="navbar-user">
                         <span>{{ auth()->user()->name }}</span>
                         @if(auth()->user()->role)
-                            <span class="role-badge">{{ auth()->user()->role->name }}</span>
+                            <span class="role-badge role-{{ strtolower(str_replace(' ', '-', $userRole)) }}">
+                                {{ $userRole }}
+                            </span>
                         @endif
                         <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                             @csrf
@@ -41,8 +100,10 @@
                         </form>
                     </div>
                 @else
+                    <a href="{{ route('guest.resources') }}">Ressources</a>
+                    <a href="{{ route('guest.info') }}">Informations</a>
+                    <a href="{{ route('account-request.create') }}">Demander un compte</a>
                     <a href="{{ route('login') }}">Connexion</a>
-                    <a href="{{ route('register') }}">Inscription</a>
                 @endauth
             </div>
         </div>

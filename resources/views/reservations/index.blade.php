@@ -5,7 +5,9 @@
 @section('content')
 <div class="flex-between mb-4">
     <h1>Mes réservations</h1>
-    <a href="{{ route('reservations.create') }}" class="btn btn-primary">Nouvelle réservation</a>
+    @if(auth()->user()->role && auth()->user()->role->name === 'Utilisateur interne')
+        <a href="{{ route('reservations.create') }}" class="btn btn-primary">Nouvelle réservation</a>
+    @endif
 </div>
 
 <div class="filter-section">
@@ -21,6 +23,32 @@
                 <option value="terminee" {{ request('status') == 'terminee' ? 'selected' : '' }}>Terminée</option>
             </select>
         </div>
+
+        @if(auth()->user()->role && in_array(auth()->user()->role->name, ['Responsable technique', 'Administrateur']))
+            <div class="form-group">
+                <label for="resource_id" class="form-label">Ressource</label>
+                <select name="resource_id" id="resource_id" class="form-control">
+                    <option value="">Toutes les ressources</option>
+                    @foreach($resources as $resource)
+                        <option value="{{ $resource->id }}" {{ request('resource_id') == $resource->id ? 'selected' : '' }}>
+                            {{ $resource->name }} ({{ $resource->category->name }})
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="user_id" class="form-label">Utilisateur</label>
+                <select name="user_id" id="user_id" class="form-control">
+                    <option value="">Tous les utilisateurs</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                            {{ $user->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
         
         <div class="form-group">
             <label for="date_from" class="form-label">Date de début</label>
@@ -36,6 +64,13 @@
             <label class="form-label" style="visibility: hidden;">Action</label>
             <button type="submit" class="btn btn-primary" style="width: 100%;">Filtrer</button>
         </div>
+
+        @if(request()->hasAny(['status', 'resource_id', 'user_id', 'date_from', 'date_to']))
+            <div class="form-group">
+                <label class="form-label" style="visibility: hidden;">Réinitialiser</label>
+                <a href="{{ route('reservations.index') }}" class="btn btn-secondary" style="width: 100%;">Réinitialiser</a>
+            </div>
+        @endif
     </form>
 </div>
 
@@ -93,7 +128,9 @@
                             <p style="padding: 2rem; color: var(--secondary-color);">
                                 Aucune réservation trouvée.
                             </p>
-                            <a href="{{ route('reservations.create') }}" class="btn btn-primary">Créer ma première réservation</a>
+                            @if(auth()->user()->role && auth()->user()->role->name === 'Utilisateur interne')
+                                <a href="{{ route('reservations.create') }}" class="btn btn-primary">Créer ma première réservation</a>
+                            @endif
                         </td>
                     </tr>
                 @endforelse

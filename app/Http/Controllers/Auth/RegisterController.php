@@ -25,7 +25,6 @@ class RegisterController extends Controller
             'user_type' => 'required|string|in:Invité,Utilisateur interne,Responsable technique',
         ]);
 
-        // Récupérer le rôle sélectionné
         $role = Role::where('name', $validated['user_type'])->first();
 
         if (!$role) {

@@ -12,14 +12,17 @@ class Resource extends Model
     protected $fillable = [
         'name',
         'category_id',
+        'manager_id',
         'specifications',
         'status',
         'location',
-        'description'
+        'description',
+        'is_active'
     ];
 
     protected $casts = [
         'specifications' => 'array',
+        'is_active' => 'boolean',
     ];
 
     public function category()
@@ -27,8 +30,23 @@ class Resource extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function manager()
+    {
+        return $this->belongsTo(User::class, 'manager_id');
+    }
+
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
+    }
+
+    public function incidents()
+    {
+        return $this->hasMany(Incident::class);
+    }
+
+    public function maintenancePeriods()
+    {
+        return $this->hasMany(MaintenancePeriod::class);
     }
 }

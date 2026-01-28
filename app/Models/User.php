@@ -2,21 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -25,21 +18,11 @@ class User extends Authenticatable
         'is_active',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -67,5 +50,30 @@ class User extends Authenticatable
     public function approvedReservations()
     {
         return $this->hasMany(Reservation::class, 'approved_by');
+    }
+
+    public function managedResources()
+    {
+        return $this->hasMany(Resource::class, 'manager_id');
+    }
+
+    public function incidents()
+    {
+        return $this->hasMany(Incident::class);
+    }
+
+    public function resolvedIncidents()
+    {
+        return $this->hasMany(Incident::class, 'resolved_by');
+    }
+
+    public function createdMaintenancePeriods()
+    {
+        return $this->hasMany(MaintenancePeriod::class, 'created_by');
+    }
+
+    public function processedAccountRequests()
+    {
+        return $this->hasMany(AccountRequest::class, 'processed_by');
     }
 }

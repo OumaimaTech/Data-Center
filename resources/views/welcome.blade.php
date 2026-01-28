@@ -30,8 +30,7 @@
 
         /* Navigation */
         .navbar {
-            position: fixed;
-            top: 0;
+            position: static;
             width: 100%;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -42,18 +41,19 @@
             z-index: 1000;
             border-bottom: 1px solid var(--border-color);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            flex-wrap: nowrap;
         }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent-green);
+        .navbar-brand {
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .nav-links {
             display: flex;
             gap: 2rem;
             align-items: center;
+            flex-wrap: nowrap;
         }
 
         .nav-links a {
@@ -61,32 +61,16 @@
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s;
-            position: relative;
         }
 
         .nav-links a:hover {
             color: var(--accent-green);
         }
 
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent-green);
-            transition: width 0.3s;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
         .btn-nav {
             padding: 0.75rem 1.5rem;
             background: var(--accent-green);
-            color: var(--primary-dark);
+            color: white;
             border: none;
             border-radius: 8px;
             font-weight: 600;
@@ -97,7 +81,7 @@
 
         .btn-nav:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 212, 170, 0.4);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
         }
 
         /* Hero Section avec Slider */
@@ -105,7 +89,6 @@
             position: relative;
             height: 100vh;
             overflow: hidden;
-            margin-top: 80px;
         }
 
         .slider {
@@ -152,7 +135,7 @@
         .hero-badge {
             display: inline-block;
             padding: 0.5rem 1.5rem;
-            background: rgba(0, 212, 170, 0.1);
+            background: rgba(16, 185, 129, 0.1);
             border: 1px solid var(--accent-green);
             border-radius: 50px;
             color: var(--accent-green);
@@ -176,7 +159,7 @@
 
         .hero-content p {
             font-size: 1.3rem;
-            color: var(--text-gray);
+            color: #cbd5e1;
             margin-bottom: 2.5rem;
             line-height: 1.8;
             animation: fadeInUp 0.8s ease-out 0.4s both;
@@ -205,23 +188,23 @@
 
         .btn-primary {
             background: var(--accent-green);
-            color: var(--primary-dark);
+            color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.4);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
         }
 
         .btn-secondary {
             background: transparent;
-            color: var(--primary-dark);
-            border: 2px solid var(--primary-dark);
+            color: white;
+            border: 2px solid white;
         }
 
         .btn-secondary:hover {
-            background: var(--primary-dark);
-            color: white;
+            background: white;
+            color: var(--primary-dark);
             transform: translateY(-3px);
         }
 
@@ -274,7 +257,7 @@
         .section-badge {
             display: inline-block;
             padding: 0.5rem 1.5rem;
-            background: rgba(0, 212, 170, 0.1);
+            background: rgba(16, 185, 129, 0.1);
             border: 1px solid var(--accent-green);
             border-radius: 50px;
             color: var(--accent-green);
@@ -332,7 +315,7 @@
         .service-card:hover {
             transform: translateY(-10px);
             border-color: var(--accent-green);
-            box-shadow: 0 20px 40px rgba(0, 212, 170, 0.1);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.1);
         }
 
         .service-card h3 {
@@ -364,17 +347,6 @@
             position: relative;
         }
 
-        .stat-item::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 4px;
-            background: var(--accent-green);
-            border-radius: 2px;
-        }
 
         .stat-number {
             font-size: 3.5rem;
@@ -405,7 +377,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="%2300d4aa" opacity="0.1"/></svg>');
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="%2310b981" opacity="0.1"/></svg>');
             background-size: 50px 50px;
             opacity: 0.1;
         }
@@ -425,7 +397,7 @@
 
         .cta p {
             font-size: 1.3rem;
-            color: var(--text-gray);
+            color: #cbd5e1;
             margin-bottom: 2.5rem;
         }
 
@@ -519,7 +491,11 @@
 <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="logo">DataCenter</div>
+        <div class="navbar-brand">
+            <a href="{{ route('home') }}" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-green); text-decoration: none;">
+                Data Center
+            </a>
+        </div>
         <div class="nav-links">
             <a href="#services">Services</a>
             <a href="#stats">Statistiques</a>
@@ -665,11 +641,11 @@
             <div class="footer-section">
                 <h3>Contact</h3>
                 <p>Email: contact@datacenter.com</p>
-                <p>Téléphone: +33 1 23 45 67 89</p>
+                <p>Téléphone: +212 5 22 12 34 56</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 DataCenter Management. Tous droits réservés.</p>
+            <p>&copy; 2026 DataCenter Management. Tous droits réservés.</p>
         </div>
     </footer>
 

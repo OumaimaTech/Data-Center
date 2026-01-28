@@ -5,41 +5,30 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Reservation extends Model
+class MaintenancePeriod extends Model
 {
     use HasFactory;
     
     protected $fillable = [
-        'user_id',
         'resource_id',
         'start_date',
         'end_date',
-        'status',
-        'justification',
-        'approval_notes',
-        'approved_by',
-        'approved_at',
-        'rejection_reason'
+        'description',
+        'created_by'
     ];
 
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
-        'approved_at' => 'datetime',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function resource()
     {
         return $this->belongsTo(Resource::class);
     }
 
-    public function approver()
+    public function creator()
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

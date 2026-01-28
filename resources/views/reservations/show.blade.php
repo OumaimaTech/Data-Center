@@ -59,7 +59,9 @@
                     <div style="margin-top: 1.5rem; padding: 1rem; background-color: #d4edda; border: 1px solid #28a745; border-radius: 6px;">
                         <strong>Approuvée par:</strong><br>
                         {{ $reservation->approver->name }}<br>
-                        <small>Le {{ $reservation->approved_at->format('d/m/Y à H:i') }}</small>
+                        @if($reservation->approved_at)
+                            <small>Le {{ $reservation->approved_at->format('d/m/Y à H:i') }}</small>
+                        @endif
                     </div>
                 @endif
 
@@ -68,7 +70,9 @@
                         <strong>Refusée</strong>
                         @if($reservation->approved_by)
                             <br>Par: {{ $reservation->approver->name }}
-                            <br><small>Le {{ $reservation->approved_at->format('d/m/Y à H:i') }}</small>
+                            @if($reservation->approved_at)
+                                <br><small>Le {{ $reservation->approved_at->format('d/m/Y à H:i') }}</small>
+                            @endif
                         @endif
                         @if($reservation->rejection_reason)
                             <br><br><strong>Raison du refus:</strong>

@@ -12,14 +12,21 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
+        
+        if (!$user->role || !in_array($user->role->name, ['Utilisateur interne', 'Responsable technique', 'Administrateur'])) {
+            abort(403, 'Accès non autorisé');
+        }
+        
         $query = Reservation::with(['resource', 'user']);
 
-        // Filtrer selon le rôle
         if ($user->role->name === 'Utilisateur interne') {
             $query->where('user_id', $user->id);
+        } elseif ($user->role->name === 'Responsable technique') {
+            $query->whereHas('resource', function ($q) use ($user) {
+                $q->where('manager_id', $user->id);
+            });
         }
 
-        // Filtres
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -28,10 +35,57 @@ class ReservationController extends Controller
             $query->where('resource_id', $request->resource_id);
         }
 
-        $reservations = $query->latest()->paginate(15);
-        $resources = Resource::with('category')->get();
+        if ($request->filled('date_from')) {
+            $query->whereDate('start_date', '>=', $request->date_from);
+        }
 
-        return view('reservations.index', compact('reservations', 'resources'));
+        if ($request->filled('date_to')) {
+            $query->whereDate('end_date', '<=', $request->date_to);
+        }
+
+        if ($request->filled('user_id') && in_array($user->role->name, ['Responsable technique', 'Administrateur'])) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        $reservations = $query->latest()->paginate(15)->withQueryString();
+        $resources = Resource::with('category')->get();
+        
+        // Récupérer tous les utilisateurs pour le filtre (pour managers et admins)
+        $users = [];
+        if (in_array($user->role->name, ['Responsable technique', 'Administrateur'])) {
+            $users = \App\Models\User::whereHas('role', function ($q) {
+                $q->where('name', 'Utilisateur interne');
+            })->orderBy('name')->get();
+        }
+
+        return view('reservations.index', compact('reservations', 'resources', 'users'));
+    }
+
+    public function history(Request $request)
+    {
+        $user = auth()->user();
+        $query = $user->reservations()->with(['resource.category']);
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('resource_id')) {
+            $query->where('resource_id', $request->resource_id);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('start_date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('end_date', '<=', $request->end_date);
+        }
+
+        $reservations = $query->latest()->paginate(15);
+        $resources = Resource::all();
+
+        return view('reservations.history', compact('reservations', 'resources'));
     }
 
     public function create()
@@ -87,7 +141,6 @@ class ReservationController extends Controller
     {
         $reservation->load(['resource.category', 'user', 'approver']);
         
-        // Vérifier les permissions
         $user = auth()->user();
         if ($user->role->name === 'Utilisateur interne' && $reservation->user_id !== $user->id) {
             abort(403);
@@ -127,7 +180,6 @@ class ReservationController extends Controller
             'rejection_reason' => $validated['rejection_reason'],
         ]);
 
-        // Notifier l'utilisateur
         Notification::create([
             'user_id' => $reservation->user_id,
             'title' => 'Réservation refusée',

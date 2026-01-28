@@ -5,27 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Reservation extends Model
+class Incident extends Model
 {
     use HasFactory;
     
     protected $fillable = [
         'user_id',
         'resource_id',
-        'start_date',
-        'end_date',
+        'title',
+        'description',
         'status',
-        'justification',
-        'approval_notes',
-        'approved_by',
-        'approved_at',
-        'rejection_reason'
+        'priority',
+        'resolved_by',
+        'resolved_at',
+        'resolution_notes'
     ];
 
     protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-        'approved_at' => 'datetime',
+        'resolved_at' => 'datetime',
     ];
 
     public function user()
@@ -38,8 +35,8 @@ class Reservation extends Model
         return $this->belongsTo(Resource::class);
     }
 
-    public function approver()
+    public function resolver()
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'resolved_by');
     }
 }

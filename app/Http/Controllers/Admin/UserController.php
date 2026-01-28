@@ -96,13 +96,11 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // Ne pas supprimer l'utilisateur connecté
         if ($user->id === auth()->id()) {
             return redirect()->route('admin.users.index')
                 ->with('error', 'Vous ne pouvez pas supprimer votre propre compte.');
         }
 
-        // Vérifier s'il y a des réservations actives
         $activeReservations = $user->reservations()
             ->where('status', 'approuvee')
             ->where('end_date', '>=', now())
