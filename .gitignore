@@ -1,4 +1,4 @@
-wwwWQ/%# Laravel
+# Laravel
 /node_modules
 /public/hot
 /public/storage
@@ -21,7 +21,17 @@ yarn-error.log
 .DS_Store
 Thumbs.db
 
-# Build files
-/public/build
-/public/css
-/public/js
+# Test files
+test-*.php
+
+# Cache files
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore

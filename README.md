@@ -197,11 +197,3 @@ php artisan cache:clear
 php artisan config:clear
 php artisan view:clear
 ```
-
-## Besoin d'aide ?
-
-Si vous rencontrez un problème ou si vous avez des questions, n'hésitez pas à contacter l'équipe de développement.
-
----
-
-Développé avec ❤️ pour faciliter la gestion des ressources du data center.
