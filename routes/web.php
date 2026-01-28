@@ -48,7 +48,6 @@ Route::middleware(['auth'])->group(function () {
     // Routes de réservations - Consultation pour tous les rôles autorisés
     Route::middleware(['role:Utilisateur interne,Responsable technique,Administrateur'])->group(function () {
         Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
-        Route::get('/reservations/{reservation}', [ReservationController::class, 'show'])->name('reservations.show');
     });
     
     // Routes de réservations - Création UNIQUEMENT pour les Utilisateurs internes
@@ -57,6 +56,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
         Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
         Route::delete('/reservations/{reservation}', [ReservationController::class, 'destroy'])->name('reservations.destroy');
+    });
+    
+    // Route show doit être après les routes spécifiques
+    Route::middleware(['role:Utilisateur interne,Responsable technique,Administrateur'])->group(function () {
+        Route::get('/reservations/{reservation}', [ReservationController::class, 'show'])->name('reservations.show');
     });
     
     Route::post('/reservations/{reservation}/approve', [ReservationController::class, 'approve'])
