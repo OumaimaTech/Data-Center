@@ -24,7 +24,7 @@ class StatisticsController extends Controller
         $occupiedResources = Reservation::where('status', 'approuvee')
             ->where('start_date', '<=', now())
             ->where('end_date', '>=', now())
-            ->distinct('resource_id')
+            ->distinct()
             ->count('resource_id');
         
         $occupationRate = $activeResources > 0 ? round(($occupiedResources / $activeResources) * 100, 2) : 0;
@@ -69,8 +69,8 @@ class StatisticsController extends Controller
             ->get();
 
         $reservationsByMonth = Reservation::select(
-                DB::raw('YEAR(created_at) as year'),
-                DB::raw('MONTH(created_at) as month'),
+                DB::raw("strftime('%Y', created_at) as year"),
+                DB::raw("strftime('%m', created_at) as month"),
                 DB::raw('count(*) as count')
             )
             ->where('created_at', '>=', now()->subMonths(12))
